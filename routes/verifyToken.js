@@ -1,21 +1,20 @@
-const express = require("express");
-const dotenv = require('dotenv').config()
-const PORT = process.env.PORT || 5009
-const connectDB = require('./dbconnect')
+const jwt = require('jsonwebtoken')
 
+const auth = (req,res,next)=>{
+    let token = req.header('auth-token')
+    if(!token || !token.startsWith('Bearer')){
+        return res.status(401).send('Acces denied')
+    }
+    
+    try{
+        token = token.split(' ')[1]
+        const verified = jwt.verify(token,process.env.TOKEN_SECRET)
+        req.user = verified;
+        next()
+    }catch(err){
+        res.status(400).send('invalid token')
+    } 
+    
+}
 
-const app = express()
-connectDB()
-app.use(express.json())
-
-
-// ROUTES
-const rmovies = require('./routes/rmovies')
-const rusers = require('./routes/rusers')
-
-app.use('/movie', rmovies)
-app.use('/auth', rusers)
-
-
-
-app.listen(PORT, ()=>{console.log(`server working at ${PORT}`)})
+module.exports = auth

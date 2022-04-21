@@ -8,12 +8,12 @@ router.get('/', getMovies)
 router.get('/:title', getMovie)
 
 // create a new movie
-router.post('/', createMovie)
+router.post('/',auth, createMovie)
 
 // update a movie by id
-router.post('/:title', updateMovie)
+router.post('/:title',auth, updateMovie)
 
 // delete a movie by id
-router.delete('/:title', deleteMovie)
+router.delete('/:title',auth, deleteMovie)
 
 module.exports = router
